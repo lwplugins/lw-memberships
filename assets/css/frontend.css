@@ -1,0 +1,107 @@
+/**
+ * LW Memberships - Frontend Styles
+ */
+
+/* Restriction Messages */
+.lw-mship-restriction {
+	padding: 20px;
+	margin: 20px 0;
+	background: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	text-align: center;
+}
+
+.lw-mship-restriction p {
+	margin: 0 0 15px 0;
+}
+
+.lw-mship-restriction p:last-child {
+	margin-bottom: 0;
+}
+
+.lw-mship-restriction .button {
+	display: inline-block;
+	padding: 8px 16px;
+	background: #2271b1;
+	color: #fff;
+	text-decoration: none;
+	border-radius: 4px;
+	margin: 0 5px;
+}
+
+.lw-mship-restriction .button:hover {
+	background: #135e96;
+}
+
+/* My Memberships Table */
+.lw-mship-my-memberships {
+	margin: 20px 0;
+}
+
+.lw-mship-memberships-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.lw-mship-memberships-table th,
+.lw-mship-memberships-table td {
+	padding: 10px;
+	border: 1px solid #ddd;
+	text-align: left;
+}
+
+.lw-mship-memberships-table th {
+	background: #f5f5f5;
+	font-weight: 600;
+}
+
+.lw-mship-status {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.lw-mship-status--active {
+	background: #d4edda;
+	color: #155724;
+}
+
+.lw-mship-status--expired {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+.lw-mship-status--paused {
+	background: #fff3cd;
+	color: #856404;
+}
+
+.lw-mship-status--cancelled {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+/* Restricted Content Shortcode Message */
+.lw-mship-restricted-message {
+	padding: 15px;
+	margin: 15px 0;
+	background: #fff3cd;
+	border: 1px solid #ffeeba;
+	border-radius: 4px;
+	color: #856404;
+}
+
+/* Login Prompt */
+.lw-mship-login-prompt {
+	padding: 15px;
+	background: #f9f9f9;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.lw-mship-login-prompt a {
+	color: #2271b1;
+}

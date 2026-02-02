@@ -1,0 +1,39 @@
+/**
+ * LW Memberships - Admin Styles
+ */
+
+/* Levels List Table */
+.lw-mship-status {
+	display: inline-block;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 500;
+}
+
+.lw-mship-status--active {
+	background: #00a32a;
+	color: #fff;
+}
+
+.lw-mship-status--inactive,
+.lw-mship-status--paused {
+	background: #dba617;
+	color: #fff;
+}
+
+.lw-mship-status--expired,
+.lw-mship-status--cancelled {
+	background: #d63638;
+	color: #fff;
+}
+
+/* Meta Box */
+#lw_mship_restriction label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+#lw_mship_restriction input[type="checkbox"] {
+	margin-right: 5px;
+}
