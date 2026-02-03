@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Memberships\Frontend\Shortcodes;
 
-use LightweightPlugins\Memberships\Database\LevelRepository;
+use LightweightPlugins\Memberships\Database\PlanRepository;
 use LightweightPlugins\Memberships\Database\MembershipRepository;
 use LightweightPlugins\Memberships\Frontend\TemplateLoader;
 
@@ -46,14 +46,14 @@ final class MyMemberships {
 			return $this->render_login_prompt();
 		}
 
-		$active_only  = 'yes' !== $atts['show_expired'];
-		$memberships  = MembershipRepository::get_by_user( $user_id, $active_only );
-		$levels_cache = [];
+		$active_only = 'yes' !== $atts['show_expired'];
+		$memberships = MembershipRepository::get_by_user( $user_id, $active_only );
+		$plans_cache = [];
 
-		// Enrich memberships with level data.
+		// Enrich memberships with plan data.
 		foreach ( $memberships as $membership ) {
-			if ( ! isset( $levels_cache[ $membership->level_id ] ) ) {
-				$levels_cache[ $membership->level_id ] = LevelRepository::get_by_id( $membership->level_id );
+			if ( ! isset( $plans_cache[ $membership->plan_id ] ) ) {
+				$plans_cache[ $membership->plan_id ] = PlanRepository::get_by_id( $membership->plan_id );
 			}
 		}
 
@@ -61,7 +61,7 @@ final class MyMemberships {
 			'my-memberships.php',
 			[
 				'memberships' => $memberships,
-				'levels'      => $levels_cache,
+				'plans'       => $plans_cache,
 				'user_id'     => $user_id,
 			]
 		);

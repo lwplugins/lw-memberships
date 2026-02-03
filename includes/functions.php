@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-use LightweightPlugins\Memberships\Database\LevelRepository;
+use LightweightPlugins\Memberships\Database\PlanRepository;
 use LightweightPlugins\Memberships\Database\MembershipRepository;
 use LightweightPlugins\Memberships\Database\RuleRepository;
 
@@ -17,13 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Check if a user has an active membership to a specific level.
+ * Check if a user has an active membership to a specific plan.
  *
- * @param int      $level_id Level ID.
- * @param int|null $user_id  User ID. Defaults to current user.
+ * @param int      $plan_id Plan ID.
+ * @param int|null $user_id User ID. Defaults to current user.
  * @return bool
  */
-function lw_mship_user_has_level( int $level_id, ?int $user_id = null ): bool {
+function lw_mship_user_has_plan( int $plan_id, ?int $user_id = null ): bool {
 	if ( null === $user_id ) {
 		$user_id = get_current_user_id();
 	}
@@ -32,7 +32,7 @@ function lw_mship_user_has_level( int $level_id, ?int $user_id = null ): bool {
 		return false;
 	}
 
-	return MembershipRepository::user_has_level( $user_id, $level_id );
+	return MembershipRepository::user_has_plan( $user_id, $plan_id );
 }
 
 /**
@@ -48,9 +48,9 @@ function lw_mship_user_can_access( int $post_id, ?int $user_id = null ): bool {
 	}
 
 	// Check if post is restricted.
-	$level_ids = RuleRepository::get_level_ids_by_post( $post_id );
+	$plan_ids = RuleRepository::get_plan_ids_by_post( $post_id );
 
-	if ( empty( $level_ids ) ) {
+	if ( empty( $plan_ids ) ) {
 		return true; // Not restricted.
 	}
 
@@ -58,9 +58,9 @@ function lw_mship_user_can_access( int $post_id, ?int $user_id = null ): bool {
 		return false; // Not logged in.
 	}
 
-	// Check if user has any of the required levels.
-	foreach ( $level_ids as $level_id ) {
-		if ( MembershipRepository::user_has_level( $user_id, $level_id ) ) {
+	// Check if user has any of the required plans.
+	foreach ( $plan_ids as $plan_id ) {
+		if ( MembershipRepository::user_has_plan( $user_id, $plan_id ) ) {
 			return true;
 		}
 	}
@@ -69,7 +69,7 @@ function lw_mship_user_can_access( int $post_id, ?int $user_id = null ): bool {
 }
 
 /**
- * Get all active membership levels for a user.
+ * Get all active memberships for a user.
  *
  * @param int|null $user_id User ID. Defaults to current user.
  * @return array<int, \LightweightPlugins\Memberships\Models\Membership>
@@ -87,28 +87,28 @@ function lw_mship_get_user_memberships( ?int $user_id = null ): array {
 }
 
 /**
- * Grant a membership level to a user.
+ * Grant a membership plan to a user.
  *
- * @param int      $user_id  User ID.
- * @param int      $level_id Level ID.
- * @param string   $source   Source (purchase, subscription, manual, import).
+ * @param int      $user_id User ID.
+ * @param int      $plan_id Plan ID.
+ * @param string   $source  Source (purchase, subscription, manual, import).
  * @param int|null $order_id Order ID (optional).
  * @return int|false Membership ID on success, false on failure.
  */
-function lw_mship_grant_membership( int $user_id, int $level_id, string $source = 'manual', ?int $order_id = null ) {
-	$level = LevelRepository::get_by_id( $level_id );
+function lw_mship_grant_membership( int $user_id, int $plan_id, string $source = 'manual', ?int $order_id = null ) {
+	$plan = PlanRepository::get_by_id( $plan_id );
 
-	if ( ! $level ) {
+	if ( ! $plan ) {
 		return false;
 	}
 
 	$start_date = current_time( 'mysql' );
-	$end_date   = $level->get_expiration_date( $start_date );
+	$end_date   = $plan->get_expiration_date( $start_date );
 
 	return MembershipRepository::create(
 		[
 			'user_id'    => $user_id,
-			'level_id'   => $level_id,
+			'plan_id'    => $plan_id,
 			'source'     => $source,
 			'order_id'   => $order_id,
 			'start_date' => $start_date,
@@ -120,12 +120,12 @@ function lw_mship_grant_membership( int $user_id, int $level_id, string $source 
 /**
  * Revoke a membership from a user.
  *
- * @param int $user_id  User ID.
- * @param int $level_id Level ID.
+ * @param int $user_id User ID.
+ * @param int $plan_id Plan ID.
  * @return bool
  */
-function lw_mship_revoke_membership( int $user_id, int $level_id ): bool {
-	$membership = MembershipRepository::get_by_user_and_level( $user_id, $level_id );
+function lw_mship_revoke_membership( int $user_id, int $plan_id ): bool {
+	$membership = MembershipRepository::get_by_user_and_plan( $user_id, $plan_id );
 
 	if ( ! $membership ) {
 		return false;
@@ -141,21 +141,21 @@ function lw_mship_revoke_membership( int $user_id, int $level_id ): bool {
 }
 
 /**
- * Get all membership levels.
+ * Get all membership plans.
  *
- * @param bool $active_only Only return active levels.
- * @return array<int, \LightweightPlugins\Memberships\Models\Level>
+ * @param bool $active_only Only return active plans.
+ * @return array<int, \LightweightPlugins\Memberships\Models\Plan>
  */
-function lw_mship_get_levels( bool $active_only = true ): array {
-	return LevelRepository::get_all( $active_only );
+function lw_mship_get_plans( bool $active_only = true ): array {
+	return PlanRepository::get_all( $active_only );
 }
 
 /**
- * Get a membership level by ID.
+ * Get a membership plan by ID.
  *
- * @param int $level_id Level ID.
- * @return \LightweightPlugins\Memberships\Models\Level|null
+ * @param int $plan_id Plan ID.
+ * @return \LightweightPlugins\Memberships\Models\Plan|null
  */
-function lw_mship_get_level( int $level_id ): ?object {
-	return LevelRepository::get_by_id( $level_id );
+function lw_mship_get_plan( int $plan_id ): ?object {
+	return PlanRepository::get_by_id( $plan_id );
 }

@@ -22,19 +22,10 @@ final class StatusHandler {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// Subscription activated.
 		add_action( 'woocommerce_subscription_status_active', [ $this, 'on_active' ] );
-
-		// Subscription on hold.
 		add_action( 'woocommerce_subscription_status_on-hold', [ $this, 'on_hold' ] );
-
-		// Subscription cancelled.
 		add_action( 'woocommerce_subscription_status_cancelled', [ $this, 'on_cancelled' ] );
-
-		// Subscription expired.
 		add_action( 'woocommerce_subscription_status_expired', [ $this, 'on_expired' ] );
-
-		// Subscription pending cancel.
 		add_action( 'woocommerce_subscription_status_pending-cancel', [ $this, 'on_pending_cancel' ] );
 	}
 
@@ -103,20 +94,19 @@ final class StatusHandler {
 
 		foreach ( $subscription->get_items() as $item ) {
 			$product_id = $item->get_product_id();
-			$level_ids  = ProductRepository::get_levels_by_product( $product_id );
+			$plan_ids   = ProductRepository::get_plans_by_product( $product_id );
 
-			foreach ( $level_ids as $level_id ) {
-				// Check for existing membership.
+			foreach ( $plan_ids as $plan_id ) {
 				$existing = MembershipRepository::get_by_subscription( $subscription->get_id() );
 
-				if ( $existing && $existing->level_id === $level_id ) {
+				if ( $existing && $existing->plan_id === $plan_id ) {
 					MembershipGranter::resume( $existing->id );
 					continue;
 				}
 
 				MembershipGranter::grant(
 					$user_id,
-					$level_id,
+					$plan_id,
 					'subscription',
 					null,
 					$subscription->get_id()
@@ -154,10 +144,10 @@ final class StatusHandler {
 
 		foreach ( $subscription->get_items() as $item ) {
 			$product_id = $item->get_product_id();
-			$level_ids  = ProductRepository::get_levels_by_product( $product_id );
+			$plan_ids   = ProductRepository::get_plans_by_product( $product_id );
 
-			foreach ( $level_ids as $level_id ) {
-				MembershipGranter::revoke( $user_id, $level_id );
+			foreach ( $plan_ids as $plan_id ) {
+				MembershipGranter::revoke( $user_id, $plan_id );
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Level model.
+ * Plan model.
  *
  * @package LightweightPlugins\Memberships
  */
@@ -10,33 +10,33 @@ declare(strict_types=1);
 namespace LightweightPlugins\Memberships\Models;
 
 /**
- * Represents a membership level.
+ * Represents a membership plan.
  */
-final class Level {
+final class Plan {
 
 	/**
-	 * Level ID.
+	 * Plan ID.
 	 *
 	 * @var int
 	 */
 	public int $id;
 
 	/**
-	 * Level name.
+	 * Plan name.
 	 *
 	 * @var string
 	 */
 	public string $name;
 
 	/**
-	 * Level slug.
+	 * Plan slug.
 	 *
 	 * @var string
 	 */
 	public string $slug;
 
 	/**
-	 * Level description.
+	 * Plan description.
 	 *
 	 * @var string
 	 */
@@ -64,7 +64,7 @@ final class Level {
 	public int $priority;
 
 	/**
-	 * Level status (active, inactive).
+	 * Plan status (active, inactive).
 	 *
 	 * @var string
 	 */
@@ -91,23 +91,23 @@ final class Level {
 	 * @return self
 	 */
 	public static function from_row( object $row ): self {
-		$level                 = new self();
-		$level->id             = (int) $row->id;
-		$level->name           = $row->name;
-		$level->slug           = $row->slug;
-		$level->description    = $row->description ?? '';
-		$level->duration_type  = $row->duration_type;
-		$level->duration_value = $row->duration_value ? (int) $row->duration_value : null;
-		$level->priority       = (int) $row->priority;
-		$level->status         = $row->status;
-		$level->created_at     = $row->created_at;
-		$level->updated_at     = $row->updated_at;
+		$plan                 = new self();
+		$plan->id             = (int) $row->id;
+		$plan->name           = $row->name;
+		$plan->slug           = $row->slug;
+		$plan->description    = $row->description ?? '';
+		$plan->duration_type  = $row->duration_type;
+		$plan->duration_value = $row->duration_value ? (int) $row->duration_value : null;
+		$plan->priority       = (int) $row->priority;
+		$plan->status         = $row->status;
+		$plan->created_at     = $row->created_at;
+		$plan->updated_at     = $row->updated_at;
 
-		return $level;
+		return $plan;
 	}
 
 	/**
-	 * Check if level is active.
+	 * Check if plan is active.
 	 *
 	 * @return bool
 	 */
@@ -116,7 +116,7 @@ final class Level {
 	}
 
 	/**
-	 * Check if level has unlimited duration.
+	 * Check if plan has unlimited duration.
 	 *
 	 * @return bool
 	 */

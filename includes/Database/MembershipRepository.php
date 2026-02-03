@@ -58,21 +58,21 @@ final class MembershipRepository {
 	}
 
 	/**
-	 * Get membership by user and level.
+	 * Get membership by user and plan.
 	 *
-	 * @param int $user_id  User ID.
-	 * @param int $level_id Level ID.
+	 * @param int $user_id User ID.
+	 * @param int $plan_id Plan ID.
 	 * @return Membership|null
 	 */
-	public static function get_by_user_and_level( int $user_id, int $level_id ): ?Membership {
+	public static function get_by_user_and_plan( int $user_id, int $plan_id ): ?Membership {
 		global $wpdb;
 
 		$table = Schema::memberships_table();
 		$row   = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$table} WHERE user_id = %d AND level_id = %d ORDER BY created_at DESC LIMIT 1", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT * FROM {$table} WHERE user_id = %d AND plan_id = %d ORDER BY created_at DESC LIMIT 1", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$user_id,
-				$level_id
+				$plan_id
 			)
 		);
 
@@ -111,7 +111,7 @@ final class MembershipRepository {
 			Schema::memberships_table(),
 			[
 				'user_id'         => $data['user_id'],
-				'level_id'        => $data['level_id'],
+				'plan_id'         => $data['plan_id'],
 				'order_id'        => $data['order_id'] ?? null,
 				'subscription_id' => $data['subscription_id'] ?? null,
 				'source'          => $data['source'] ?? 'manual',
@@ -191,13 +191,13 @@ final class MembershipRepository {
 	}
 
 	/**
-	 * Check if user has active membership to level.
+	 * Check if user has active membership to plan.
 	 *
-	 * @param int $user_id  User ID.
-	 * @param int $level_id Level ID.
+	 * @param int $user_id User ID.
+	 * @param int $plan_id Plan ID.
 	 * @return bool
 	 */
-	public static function user_has_level( int $user_id, int $level_id ): bool {
+	public static function user_has_plan( int $user_id, int $plan_id ): bool {
 		global $wpdb;
 
 		$table = Schema::memberships_table();
@@ -205,13 +205,55 @@ final class MembershipRepository {
 
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE user_id = %d AND level_id = %d AND status = 'active' AND (end_date IS NULL OR end_date > %s)", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT COUNT(*) FROM {$table} WHERE user_id = %d AND plan_id = %d AND status = 'active' AND (end_date IS NULL OR end_date > %s)", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$user_id,
-				$level_id,
+				$plan_id,
 				$now
 			)
 		);
 
 		return (int) $count > 0;
+	}
+
+	/**
+	 * Get memberships by plan (paginated).
+	 *
+	 * @param int $plan_id  Plan ID.
+	 * @param int $page     Current page.
+	 * @param int $per_page Items per page.
+	 * @return array<int, Membership>
+	 */
+	public static function get_by_plan( int $plan_id, int $page = 1, int $per_page = 20 ): array {
+		global $wpdb;
+
+		$table  = Schema::memberships_table();
+		$offset = ( $page - 1 ) * $per_page;
+
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE plan_id = %d ORDER BY created_at DESC LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$plan_id,
+				$per_page,
+				$offset
+			)
+		);
+
+		return array_map( [ Membership::class, 'from_row' ], $results );
+	}
+
+	/**
+	 * Count memberships by plan.
+	 *
+	 * @param int $plan_id Plan ID.
+	 * @return int
+	 */
+	public static function count_by_plan( int $plan_id ): int {
+		global $wpdb;
+
+		$table = Schema::memberships_table();
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE plan_id = %d", $plan_id ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		);
 	}
 }

@@ -6,7 +6,7 @@
  *
  * Available variables:
  * @var array<\LightweightPlugins\Memberships\Models\Membership> $memberships User memberships.
- * @var array<\LightweightPlugins\Memberships\Models\Level>      $levels      Levels cache.
+ * @var array<\LightweightPlugins\Memberships\Models\Plan>       $plans       Plans cache.
  * @var int                                                       $user_id     User ID.
  */
 
@@ -28,13 +28,13 @@ defined( 'ABSPATH' ) || exit;
 			<tbody>
 				<?php foreach ( $memberships as $membership ) : ?>
 					<?php
-					$level = $levels[ $membership->level_id ] ?? null;
-					if ( ! $level ) {
+					$plan = $plans[ $membership->plan_id ] ?? null;
+					if ( ! $plan ) {
 						continue;
 					}
 					?>
 					<tr>
-						<td><?php echo esc_html( $level->name ); ?></td>
+						<td><?php echo esc_html( $plan->name ); ?></td>
 						<td>
 							<span class="lw-mship-status lw-mship-status--<?php echo esc_attr( $membership->status ); ?>">
 								<?php echo esc_html( ucfirst( $membership->status ) ); ?>

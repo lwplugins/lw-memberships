@@ -36,11 +36,11 @@ final class ContentRule {
 	public string $post_type;
 
 	/**
-	 * Level ID.
+	 * Plan ID.
 	 *
 	 * @var int
 	 */
-	public int $level_id;
+	public int $plan_id;
 
 	/**
 	 * Created at timestamp.
@@ -60,7 +60,7 @@ final class ContentRule {
 		$rule->id         = (int) $row->id;
 		$rule->post_id    = (int) $row->post_id;
 		$rule->post_type  = $row->post_type;
-		$rule->level_id   = (int) $row->level_id;
+		$rule->plan_id    = (int) $row->plan_id;
 		$rule->created_at = $row->created_at;
 
 		return $rule;

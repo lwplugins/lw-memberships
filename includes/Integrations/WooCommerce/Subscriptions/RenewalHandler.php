@@ -10,8 +10,7 @@ declare(strict_types=1);
 namespace LightweightPlugins\Memberships\Integrations\WooCommerce\Subscriptions;
 
 use LightweightPlugins\Memberships\Database\MembershipRepository;
-use LightweightPlugins\Memberships\Database\ProductRepository;
-use LightweightPlugins\Memberships\Database\LevelRepository;
+use LightweightPlugins\Memberships\Database\PlanRepository;
 
 /**
  * Handles WooCommerce Subscriptions renewal.
@@ -39,15 +38,15 @@ final class RenewalHandler {
 			return;
 		}
 
-		$level = LevelRepository::get_by_id( $membership->level_id );
+		$plan = PlanRepository::get_by_id( $membership->plan_id );
 
-		if ( ! $level ) {
+		if ( ! $plan ) {
 			return;
 		}
 
-		// Extend membership based on level duration.
+		// Extend membership based on plan duration.
 		$start_from = $membership->end_date ?? current_time( 'mysql' );
-		$new_end    = $level->get_expiration_date( $start_from );
+		$new_end    = $plan->get_expiration_date( $start_from );
 
 		MembershipRepository::update(
 			$membership->id,

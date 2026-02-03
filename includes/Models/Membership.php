@@ -29,11 +29,11 @@ final class Membership {
 	public int $user_id;
 
 	/**
-	 * Level ID.
+	 * Plan ID.
 	 *
 	 * @var int
 	 */
-	public int $level_id;
+	public int $plan_id;
 
 	/**
 	 * Order ID.
@@ -108,7 +108,7 @@ final class Membership {
 		$membership                  = new self();
 		$membership->id              = (int) $row->id;
 		$membership->user_id         = (int) $row->user_id;
-		$membership->level_id        = (int) $row->level_id;
+		$membership->plan_id         = (int) $row->plan_id;
 		$membership->order_id        = $row->order_id ? (int) $row->order_id : null;
 		$membership->subscription_id = $row->subscription_id ? (int) $row->subscription_id : null;
 		$membership->source          = $row->source;

@@ -10,11 +10,14 @@ declare(strict_types=1);
 namespace LightweightPlugins\Memberships;
 
 use LightweightPlugins\Memberships\Admin\SettingsPage;
-use LightweightPlugins\Memberships\Admin\Levels\LevelsPage;
+use LightweightPlugins\Memberships\Admin\Plans\PlansPage;
+use LightweightPlugins\Memberships\Admin\Ajax\ContentSearchHandler;
+use LightweightPlugins\Memberships\Admin\Ajax\MemberSearchHandler;
 use LightweightPlugins\Memberships\Integrations\WooCommerce\OrderHandler;
 use LightweightPlugins\Memberships\Integrations\WooCommerce\RefundHandler;
 use LightweightPlugins\Memberships\Admin\MetaBox\ContentRestriction;
 use LightweightPlugins\Memberships\Frontend\ContentFilter;
+use LightweightPlugins\Memberships\Frontend\QueryFilter;
 use LightweightPlugins\Memberships\Frontend\Shortcodes\RestrictedContent;
 use LightweightPlugins\Memberships\Frontend\Shortcodes\MyMemberships;
 use LightweightPlugins\Memberships\Integrations\WooCommerce\Subscriptions\StatusHandler;
@@ -58,8 +61,10 @@ final class Plugin {
 	private function init_admin(): void {
 		if ( is_admin() ) {
 			new SettingsPage();
-			new LevelsPage();
+			new PlansPage();
 			new ContentRestriction();
+			new ContentSearchHandler();
+			new MemberSearchHandler();
 		}
 	}
 
@@ -74,6 +79,7 @@ final class Plugin {
 
 		if ( ! is_admin() ) {
 			new ContentFilter();
+			new QueryFilter();
 		}
 	}
 

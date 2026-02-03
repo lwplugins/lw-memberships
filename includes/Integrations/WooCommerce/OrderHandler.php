@@ -89,12 +89,12 @@ final class OrderHandler {
 
 		foreach ( $order->get_items() as $item ) {
 			$product_id = $item->get_product_id();
-			$level_ids  = ProductRepository::get_levels_by_product( $product_id );
+			$plan_ids   = ProductRepository::get_plans_by_product( $product_id );
 
-			foreach ( $level_ids as $level_id ) {
+			foreach ( $plan_ids as $plan_id ) {
 				$result = MembershipGranter::grant(
 					$user_id,
-					$level_id,
+					$plan_id,
 					'purchase',
 					$order_id
 				);
@@ -109,9 +109,8 @@ final class OrderHandler {
 			$order->update_meta_data( '_lw_mship_processed', true );
 			$order->save();
 
-			/* translators: %d: order ID */
 			$order->add_order_note(
-				sprintf( __( 'LW Memberships: Membership(s) granted.', 'lw-memberships' ) )
+				__( 'LW Memberships: Membership(s) granted.', 'lw-memberships' )
 			);
 		}
 	}

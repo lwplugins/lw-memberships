@@ -2,7 +2,7 @@
  * LW Memberships - Admin Styles
  */
 
-/* Levels List Table */
+/* Status Badges */
 .lw-mship-status {
 	display: inline-block;
 	padding: 2px 6px;
@@ -36,4 +36,90 @@
 
 #lw_mship_restriction input[type="checkbox"] {
 	margin-right: 5px;
+}
+
+/* Plan Editor Tabs */
+.lw-mship-plan-editor .nav-tab-wrapper {
+	margin-bottom: 20px;
+}
+
+/* Content Tab */
+.lw-mship-content-search-wrap {
+	margin-bottom: 15px;
+}
+
+.lw-mship-content-search-wrap input[type="search"] {
+	width: 100%;
+	max-width: 400px;
+}
+
+#lw-mship-content-results {
+	max-height: 200px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	background: #fff;
+	display: none;
+}
+
+#lw-mship-content-results:not(:empty) {
+	display: block;
+}
+
+.lw-mship-search-result {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 12px;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.lw-mship-search-result:last-child {
+	border-bottom: 0;
+}
+
+.lw-mship-search-result:hover {
+	background: #f6f7f7;
+}
+
+.lw-mship-search-result small {
+	color: #666;
+}
+
+/* Content List */
+.lw-mship-content-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	margin-bottom: -1px;
+}
+
+.lw-mship-content-item small {
+	color: #666;
+}
+
+/* Members Tab */
+.lw-mship-add-member {
+	margin-bottom: 20px;
+	padding: 15px;
+	background: #fff;
+	border: 1px solid #ddd;
+}
+
+.lw-mship-add-member h3 {
+	margin-top: 0;
+}
+
+#lw-mship-member-results {
+	max-height: 200px;
+	overflow-y: auto;
+	border: 1px solid #ddd;
+	background: #fff;
+	display: none;
+}
+
+#lw-mship-member-results:not(:empty) {
+	display: block;
 }

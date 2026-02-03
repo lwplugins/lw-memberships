@@ -1,20 +1,18 @@
 <?php
 /**
- * Level fields trait.
+ * Plan fields trait.
  *
  * @package LightweightPlugins\Memberships
  */
 
 declare(strict_types=1);
 
-namespace LightweightPlugins\Memberships\Admin\Levels;
-
-use LightweightPlugins\Memberships\Database\ProductRepository;
+namespace LightweightPlugins\Memberships\Admin\Plans;
 
 /**
- * Provides form field rendering for level editor.
+ * Provides form field rendering for plan editor.
  */
-trait LevelFieldsTrait {
+trait PlanFieldsTrait {
 
 	/**
 	 * Render name field.
@@ -22,7 +20,7 @@ trait LevelFieldsTrait {
 	 * @return void
 	 */
 	private function render_name_field(): void {
-		$value = $this->level->name ?? '';
+		$value = $this->plan->name ?? '';
 		?>
 		<tr>
 			<th scope="row"><label for="name"><?php esc_html_e( 'Name', 'lw-memberships' ); ?> *</label></th>
@@ -37,7 +35,7 @@ trait LevelFieldsTrait {
 	 * @return void
 	 */
 	private function render_slug_field(): void {
-		$value = $this->level->slug ?? '';
+		$value = $this->plan->slug ?? '';
 		?>
 		<tr>
 			<th scope="row"><label for="slug"><?php esc_html_e( 'Slug', 'lw-memberships' ); ?></label></th>
@@ -55,7 +53,7 @@ trait LevelFieldsTrait {
 	 * @return void
 	 */
 	private function render_description_field(): void {
-		$value = $this->level->description ?? '';
+		$value = $this->plan->description ?? '';
 		?>
 		<tr>
 			<th scope="row"><label for="description"><?php esc_html_e( 'Description', 'lw-memberships' ); ?></label></th>
@@ -70,8 +68,8 @@ trait LevelFieldsTrait {
 	 * @return void
 	 */
 	private function render_duration_field(): void {
-		$type  = $this->level->duration_type ?? 'forever';
-		$value = $this->level->duration_value ?? '';
+		$type  = $this->plan->duration_type ?? 'forever';
+		$value = $this->plan->duration_value ?? '';
 		?>
 		<tr>
 			<th scope="row"><label><?php esc_html_e( 'Duration', 'lw-memberships' ); ?></label></th>

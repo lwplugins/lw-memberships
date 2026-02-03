@@ -1,16 +1,19 @@
 # LW Memberships
 
 > **Warning**
-> This plugin is currently in **alpha stage** and under active development. It is **not recommended for production use**. APIs and database schemas may change without notice. Use at your own risk.
+> !! This plugin is currently in **alpha stage** and under active development. It is **not recommended for production use**. APIs and database schemas may change without notice. Use at your own risk. !!
 
 Lightweight membership system for WordPress with WooCommerce integration. Part of the [LW Plugins](https://github.com/lwplugins) family.
 
 ## Features
 
-- **Membership Levels** - Create unlimited membership levels with customizable durations (lifetime, days, months, years)
-- **WooCommerce Integration** - Link products to membership levels for automatic access on purchase
+- **Membership Plans** - Create unlimited membership plans with customizable durations (lifetime, days, months, years)
+- **Tabbed Plan Editor** - Manage plans with General, Content, WooCommerce, and Members tabs
+- **WooCommerce Integration** - Link products to membership plans for automatic access on purchase
 - **WooCommerce Subscriptions** - Full support for recurring memberships with status synchronization
-- **Content Restriction** - Restrict posts, pages, and custom post types to specific membership levels
+- **Content Restriction** - Restrict posts, pages, and custom post types to specific membership plans
+- **Content Hiding** - Restricted content is hidden from archives, search, and feeds
+- **Manual Member Management** - Add and remove members directly from the plan editor
 - **Shortcodes** - Display restricted content and member dashboards
 - **Template Overrides** - Customize restriction messages via theme templates
 - **Lightweight** - Minimal footprint, no bloat, no upsells
@@ -39,25 +42,28 @@ composer require lwplugins/lw-memberships
 
 ## Usage
 
-### Creating Membership Levels
+### Creating Membership Plans
 
-1. Go to **LW Plugins > Levels**
+1. Go to **LW Plugins > Plans**
 2. Click **Add New**
-3. Configure level name, duration, and linked WooCommerce products
-4. Save the level
+3. Configure plan name, duration, and settings in the tabbed editor
+4. Use the Content tab to assign posts/pages
+5. Use the WooCommerce tab to link products
+6. Use the Members tab to manage members manually
+7. Save the plan
 
 ### Restricting Content
 
 1. Edit any post, page, or custom post type
 2. Find the **Membership Restriction** meta box in the sidebar
-3. Select which membership levels can access this content
+3. Select which membership plans can access this content
 4. Update/publish the post
 
 ### Shortcodes
 
 **Restrict inline content:**
 ```
-[lw_mship_restricted level="1,2" message="Members only content"]
+[lw_mship_restricted plan="1,2" message="Members only content"]
   Your protected content here
 [/lw_mship_restricted]
 ```
@@ -70,8 +76,8 @@ composer require lwplugins/lw-memberships
 ### Public API Functions
 
 ```php
-// Check if user has specific level
-lw_mship_user_has_level( int $level_id, ?int $user_id = null ): bool
+// Check if user has specific plan
+lw_mship_user_has_plan( int $plan_id, ?int $user_id = null ): bool
 
 // Check if user can access content
 lw_mship_user_can_access( int $post_id, ?int $user_id = null ): bool
@@ -80,13 +86,13 @@ lw_mship_user_can_access( int $post_id, ?int $user_id = null ): bool
 lw_mship_get_user_memberships( ?int $user_id = null ): array
 
 // Grant membership to user
-lw_mship_grant_membership( int $user_id, int $level_id, string $source = 'manual', ?int $order_id = null )
+lw_mship_grant_membership( int $user_id, int $plan_id, string $source = 'manual', ?int $order_id = null )
 
 // Revoke membership from user
-lw_mship_revoke_membership( int $user_id, int $level_id ): bool
+lw_mship_revoke_membership( int $user_id, int $plan_id ): bool
 
-// Get all membership levels
-lw_mship_get_levels( bool $active_only = true ): array
+// Get all membership plans
+lw_mship_get_plans( bool $active_only = true ): array
 ```
 
 ## Template Overrides
@@ -105,13 +111,13 @@ Copy templates from `templates/` to your theme's `lw-memberships/` directory to 
 
 ```php
 // Fired when membership is granted
-do_action( 'lw_mship_membership_granted', $membership_id, $user_id, $level_id );
+do_action( 'lw_mship_membership_granted', $membership_id, $user_id, $plan_id );
 
 // Fired when membership is revoked
-do_action( 'lw_mship_membership_revoked', $membership_id, $user_id, $level_id );
+do_action( 'lw_mship_membership_revoked', $membership_id, $user_id, $plan_id );
 
 // Fired when membership expires
-do_action( 'lw_mship_membership_expired', $membership_id, $user_id, $level_id );
+do_action( 'lw_mship_membership_expired', $membership_id, $user_id, $plan_id );
 ```
 
 ### Filters
@@ -140,8 +146,8 @@ The plugin creates 4 custom tables:
 
 | Table | Description |
 |-------|-------------|
-| `{prefix}_lw_mship_levels` | Membership levels |
-| `{prefix}_lw_mship_level_products` | Level-Product associations |
+| `{prefix}_lw_mship_plans` | Membership plans |
+| `{prefix}_lw_mship_plan_products` | Plan-Product associations |
 | `{prefix}_lw_mship_user_memberships` | User memberships |
 | `{prefix}_lw_mship_content_rules` | Content restriction rules |
 

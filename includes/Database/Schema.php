@@ -15,23 +15,23 @@ namespace LightweightPlugins\Memberships\Database;
 final class Schema {
 
 	/**
-	 * Get levels table name.
+	 * Get plans table name.
 	 *
 	 * @return string
 	 */
-	public static function levels_table(): string {
+	public static function plans_table(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'lw_mship_levels';
+		return $wpdb->prefix . 'lw_mship_plans';
 	}
 
 	/**
-	 * Get level products table name.
+	 * Get plan products table name.
 	 *
 	 * @return string
 	 */
-	public static function level_products_table(): string {
+	public static function plan_products_table(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'lw_mship_level_products';
+		return $wpdb->prefix . 'lw_mship_plan_products';
 	}
 
 	/**
@@ -55,12 +55,12 @@ final class Schema {
 	}
 
 	/**
-	 * Get SQL for levels table creation.
+	 * Get SQL for plans table creation.
 	 *
 	 * @return string
 	 */
-	public static function get_levels_sql(): string {
-		$table   = self::levels_table();
+	public static function get_plans_sql(): string {
+		$table   = self::plans_table();
 		$charset = self::get_charset_collate();
 
 		return "CREATE TABLE {$table} (
@@ -80,22 +80,22 @@ final class Schema {
 	}
 
 	/**
-	 * Get SQL for level products table creation.
+	 * Get SQL for plan products table creation.
 	 *
 	 * @return string
 	 */
-	public static function get_level_products_sql(): string {
-		$table   = self::level_products_table();
+	public static function get_plan_products_sql(): string {
+		$table   = self::plan_products_table();
 		$charset = self::get_charset_collate();
 
 		return "CREATE TABLE {$table} (
 			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-			level_id BIGINT(20) UNSIGNED NOT NULL,
+			plan_id BIGINT(20) UNSIGNED NOT NULL,
 			product_id BIGINT(20) UNSIGNED NOT NULL,
 			product_type VARCHAR(50) DEFAULT 'simple',
 			created_at DATETIME NOT NULL,
 			PRIMARY KEY (id),
-			UNIQUE KEY level_product (level_id, product_id)
+			UNIQUE KEY plan_product (plan_id, product_id)
 		) {$charset};";
 	}
 
@@ -111,7 +111,7 @@ final class Schema {
 		return "CREATE TABLE {$table} (
 			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			user_id BIGINT(20) UNSIGNED NOT NULL,
-			level_id BIGINT(20) UNSIGNED NOT NULL,
+			plan_id BIGINT(20) UNSIGNED NOT NULL,
 			order_id BIGINT(20) UNSIGNED NULL,
 			subscription_id BIGINT(20) UNSIGNED NULL,
 			source ENUM('purchase', 'subscription', 'manual', 'import') DEFAULT 'manual',
@@ -123,7 +123,7 @@ final class Schema {
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY (id),
 			KEY user_status (user_id, status),
-			KEY level_id (level_id),
+			KEY plan_id (plan_id),
 			KEY subscription_id (subscription_id)
 		) {$charset};";
 	}
@@ -141,11 +141,11 @@ final class Schema {
 			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			post_id BIGINT(20) UNSIGNED NOT NULL,
 			post_type VARCHAR(50) NOT NULL,
-			level_id BIGINT(20) UNSIGNED NOT NULL,
+			plan_id BIGINT(20) UNSIGNED NOT NULL,
 			created_at DATETIME NOT NULL,
 			PRIMARY KEY (id),
-			UNIQUE KEY post_level (post_id, level_id),
-			KEY level_id (level_id)
+			UNIQUE KEY post_plan (post_id, plan_id),
+			KEY plan_id (plan_id)
 		) {$charset};";
 	}
 

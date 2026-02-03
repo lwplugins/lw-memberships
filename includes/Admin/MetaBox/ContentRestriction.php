@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Memberships\Admin\MetaBox;
 
-use LightweightPlugins\Memberships\Database\LevelRepository;
+use LightweightPlugins\Memberships\Database\PlanRepository;
 use LightweightPlugins\Memberships\Database\RuleRepository;
 
 /**
@@ -70,29 +70,29 @@ final class ContentRestriction {
 	 * @return void
 	 */
 	public function render( \WP_Post $post ): void {
-		$levels          = LevelRepository::get_all( true );
-		$selected_levels = RuleRepository::get_level_ids_by_post( $post->ID );
+		$plans          = PlanRepository::get_all( true );
+		$selected_plans = RuleRepository::get_plan_ids_by_post( $post->ID );
 
 		wp_nonce_field( 'lw_mship_restriction', 'lw_mship_restriction_nonce' );
 
-		if ( empty( $levels ) ) {
-			$this->render_no_levels();
+		if ( empty( $plans ) ) {
+			$this->render_no_plans();
 			return;
 		}
 
-		$this->render_level_checkboxes( $levels, $selected_levels );
+		$this->render_plan_checkboxes( $plans, $selected_plans );
 	}
 
 	/**
-	 * Render no levels message.
+	 * Render no plans message.
 	 *
 	 * @return void
 	 */
-	private function render_no_levels(): void {
+	private function render_no_plans(): void {
 		?>
 		<p>
-			<?php esc_html_e( 'No membership levels found.', 'lw-memberships' ); ?>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=lw-memberships-levels&action=new' ) ); ?>">
+			<?php esc_html_e( 'No membership plans found.', 'lw-memberships' ); ?>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=lw-memberships-plans&action=new' ) ); ?>">
 				<?php esc_html_e( 'Create one', 'lw-memberships' ); ?>
 			</a>
 		</p>
@@ -100,25 +100,25 @@ final class ContentRestriction {
 	}
 
 	/**
-	 * Render level checkboxes.
+	 * Render plan checkboxes.
 	 *
-	 * @param array<\LightweightPlugins\Memberships\Models\Level> $levels          Levels.
-	 * @param array<int>                                          $selected_levels Selected level IDs.
+	 * @param array<\LightweightPlugins\Memberships\Models\Plan> $plans          Plans.
+	 * @param array<int>                                         $selected_plans Selected plan IDs.
 	 * @return void
 	 */
-	private function render_level_checkboxes( array $levels, array $selected_levels ): void {
+	private function render_plan_checkboxes( array $plans, array $selected_plans ): void {
 		?>
 		<p><?php esc_html_e( 'Restrict this content to:', 'lw-memberships' ); ?></p>
 
-		<?php foreach ( $levels as $level ) : ?>
+		<?php foreach ( $plans as $plan ) : ?>
 			<label style="display: block; margin-bottom: 5px;">
 				<input
 					type="checkbox"
-					name="lw_mship_levels[]"
-					value="<?php echo esc_attr( (string) $level->id ); ?>"
-					<?php checked( in_array( $level->id, $selected_levels, true ) ); ?>
+					name="lw_mship_plans[]"
+					value="<?php echo esc_attr( (string) $plan->id ); ?>"
+					<?php checked( in_array( $plan->id, $selected_plans, true ) ); ?>
 				>
-				<?php echo esc_html( $level->name ); ?>
+				<?php echo esc_html( $plan->name ); ?>
 			</label>
 		<?php endforeach; ?>
 

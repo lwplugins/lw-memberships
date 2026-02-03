@@ -73,10 +73,10 @@ final class RefundHandler {
 
 		foreach ( $order->get_items() as $item ) {
 			$product_id = $item->get_product_id();
-			$level_ids  = ProductRepository::get_levels_by_product( $product_id );
+			$plan_ids   = ProductRepository::get_plans_by_product( $product_id );
 
-			foreach ( $level_ids as $level_id ) {
-				$result = MembershipGranter::revoke( $user_id, $level_id );
+			foreach ( $plan_ids as $plan_id ) {
+				$result = MembershipGranter::revoke( $user_id, $plan_id );
 
 				if ( $result ) {
 					$revoked = true;

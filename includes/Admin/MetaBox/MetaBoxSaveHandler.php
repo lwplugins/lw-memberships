@@ -43,15 +43,15 @@ final class MetaBoxSaveHandler {
 			return;
 		}
 
-		// Get selected levels.
-		$level_ids = [];
+		// Get selected plans.
+		$plan_ids = [];
 
-		if ( isset( $_POST['lw_mship_levels'] ) && is_array( $_POST['lw_mship_levels'] ) ) {
-			$level_ids = array_map( 'absint', $_POST['lw_mship_levels'] );
-			$level_ids = array_filter( $level_ids );
+		if ( isset( $_POST['lw_mship_plans'] ) && is_array( $_POST['lw_mship_plans'] ) ) {
+			$plan_ids = array_map( 'absint', $_POST['lw_mship_plans'] );
+			$plan_ids = array_filter( $plan_ids );
 		}
 
 		// Sync rules.
-		RuleRepository::sync( $post_id, $level_ids, $post->post_type );
+		RuleRepository::sync( $post_id, $plan_ids, $post->post_type );
 	}
 }

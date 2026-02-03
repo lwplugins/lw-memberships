@@ -34,7 +34,7 @@ final class RestrictedContent {
 	public function render( $atts, ?string $content = null ): string {
 		$atts = shortcode_atts(
 			[
-				'level'   => '',
+				'plan'    => '',
 				'message' => '',
 			],
 			$atts,
@@ -52,11 +52,11 @@ final class RestrictedContent {
 			return $this->get_message( $atts['message'], 'not_logged_in' );
 		}
 
-		// Check for specific level(s).
-		if ( ! empty( $atts['level'] ) ) {
-			$level_ids = $this->parse_levels( $atts['level'] );
+		// Check for specific plan(s).
+		if ( ! empty( $atts['plan'] ) ) {
+			$plan_ids = $this->parse_plans( $atts['plan'] );
 
-			if ( ! $this->user_has_any_level( $user_id, $level_ids ) ) {
+			if ( ! $this->user_has_any_plan( $user_id, $plan_ids ) ) {
 				return $this->get_message( $atts['message'], 'no_access' );
 			}
 		} else {
@@ -72,26 +72,26 @@ final class RestrictedContent {
 	}
 
 	/**
-	 * Parse level IDs from attribute.
+	 * Parse plan IDs from attribute.
 	 *
-	 * @param string $level Level attribute (ID or comma-separated IDs).
+	 * @param string $plan Plan attribute (ID or comma-separated IDs).
 	 * @return array<int>
 	 */
-	private function parse_levels( string $level ): array {
-		$ids = array_map( 'trim', explode( ',', $level ) );
+	private function parse_plans( string $plan ): array {
+		$ids = array_map( 'trim', explode( ',', $plan ) );
 		return array_map( 'absint', $ids );
 	}
 
 	/**
-	 * Check if user has any of the specified levels.
+	 * Check if user has any of the specified plans.
 	 *
-	 * @param int        $user_id   User ID.
-	 * @param array<int> $level_ids Level IDs.
+	 * @param int        $user_id  User ID.
+	 * @param array<int> $plan_ids Plan IDs.
 	 * @return bool
 	 */
-	private function user_has_any_level( int $user_id, array $level_ids ): bool {
-		foreach ( $level_ids as $level_id ) {
-			if ( MembershipRepository::user_has_level( $user_id, $level_id ) ) {
+	private function user_has_any_plan( int $user_id, array $plan_ids ): bool {
+		foreach ( $plan_ids as $plan_id ) {
+			if ( MembershipRepository::user_has_plan( $user_id, $plan_id ) ) {
 				return true;
 			}
 		}

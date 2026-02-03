@@ -1,32 +1,33 @@
 <?php
 /**
- * Levels admin page.
+ * Plans admin page.
  *
  * @package LightweightPlugins\Memberships
  */
 
 declare(strict_types=1);
 
-namespace LightweightPlugins\Memberships\Admin\Levels;
+namespace LightweightPlugins\Memberships\Admin\Plans;
 
 use LightweightPlugins\Memberships\Admin\ParentPage;
 
 /**
- * Handles the levels admin page.
+ * Handles the plans admin page.
  */
-final class LevelsPage {
+final class PlansPage {
 
 	/**
 	 * Page slug.
 	 */
-	public const SLUG = 'lw-memberships-levels';
+	public const SLUG = 'lw-memberships-plans';
 
 	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'add_menu_page' ] );
-		add_action( 'admin_init', [ LevelSaveHandler::class, 'handle' ] );
+		add_action( 'admin_init', [ PlanSaveHandler::class, 'handle' ] );
+		add_action( 'admin_init', [ MembersSaveHandler::class, 'handle' ] );
 	}
 
 	/**
@@ -37,8 +38,8 @@ final class LevelsPage {
 	public function add_menu_page(): void {
 		add_submenu_page(
 			ParentPage::SLUG,
-			__( 'Membership Levels', 'lw-memberships' ),
-			__( 'Levels', 'lw-memberships' ),
+			__( 'Membership Plans', 'lw-memberships' ),
+			__( 'Plans', 'lw-memberships' ),
 			'manage_options',
 			self::SLUG,
 			[ $this, 'render' ]
@@ -77,11 +78,11 @@ final class LevelsPage {
 	 * @return void
 	 */
 	private function render_list(): void {
-		$list_table = new LevelsListTable();
+		$list_table = new PlansListTable();
 		$list_table->prepare_items();
 
 		?>
-		<h1 class="wp-heading-inline"><?php esc_html_e( 'Membership Levels', 'lw-memberships' ); ?></h1>
+		<h1 class="wp-heading-inline"><?php esc_html_e( 'Membership Plans', 'lw-memberships' ); ?></h1>
 		<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::SLUG . '&action=new' ) ); ?>" class="page-title-action">
 			<?php esc_html_e( 'Add New', 'lw-memberships' ); ?>
 		</a>
@@ -97,11 +98,11 @@ final class LevelsPage {
 	/**
 	 * Render the editor.
 	 *
-	 * @param int $id Level ID.
+	 * @param int $id Plan ID.
 	 * @return void
 	 */
 	private function render_editor( int $id ): void {
-		$editor = new LevelEditor( $id );
+		$editor = new PlanEditor( $id );
 		$editor->render();
 	}
 }

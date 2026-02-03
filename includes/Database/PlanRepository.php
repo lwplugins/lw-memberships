@@ -1,6 +1,6 @@
 <?php
 /**
- * Level repository.
+ * Plan repository.
  *
  * @package LightweightPlugins\Memberships
  */
@@ -9,23 +9,23 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Memberships\Database;
 
-use LightweightPlugins\Memberships\Models\Level;
+use LightweightPlugins\Memberships\Models\Plan;
 
 /**
- * Handles database operations for membership levels.
+ * Handles database operations for membership plans.
  */
-final class LevelRepository {
+final class PlanRepository {
 
 	/**
-	 * Get all levels.
+	 * Get all plans.
 	 *
-	 * @param bool $active_only Only return active levels.
-	 * @return array<int, Level>
+	 * @param bool $active_only Only return active plans.
+	 * @return array<int, Plan>
 	 */
 	public static function get_all( bool $active_only = false ): array {
 		global $wpdb;
 
-		$table = Schema::levels_table();
+		$table = Schema::plans_table();
 		$sql   = "SELECT * FROM {$table}";
 
 		if ( $active_only ) {
@@ -36,48 +36,48 @@ final class LevelRepository {
 
 		$results = $wpdb->get_results( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-		return array_map( [ Level::class, 'from_row' ], $results );
+		return array_map( [ Plan::class, 'from_row' ], $results );
 	}
 
 	/**
-	 * Get level by ID.
+	 * Get plan by ID.
 	 *
-	 * @param int $id Level ID.
-	 * @return Level|null
+	 * @param int $id Plan ID.
+	 * @return Plan|null
 	 */
-	public static function get_by_id( int $id ): ?Level {
+	public static function get_by_id( int $id ): ?Plan {
 		global $wpdb;
 
-		$table = Schema::levels_table();
+		$table = Schema::plans_table();
 		$row   = $wpdb->get_row(
 			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		);
 
-		return $row ? Level::from_row( $row ) : null;
+		return $row ? Plan::from_row( $row ) : null;
 	}
 
 	/**
-	 * Get level by slug.
+	 * Get plan by slug.
 	 *
-	 * @param string $slug Level slug.
-	 * @return Level|null
+	 * @param string $slug Plan slug.
+	 * @return Plan|null
 	 */
-	public static function get_by_slug( string $slug ): ?Level {
+	public static function get_by_slug( string $slug ): ?Plan {
 		global $wpdb;
 
-		$table = Schema::levels_table();
+		$table = Schema::plans_table();
 		$row   = $wpdb->get_row(
 			$wpdb->prepare( "SELECT * FROM {$table} WHERE slug = %s", $slug ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		);
 
-		return $row ? Level::from_row( $row ) : null;
+		return $row ? Plan::from_row( $row ) : null;
 	}
 
 	/**
-	 * Create a new level.
+	 * Create a new plan.
 	 *
-	 * @param array<string, mixed> $data Level data.
-	 * @return int|false Level ID on success, false on failure.
+	 * @param array<string, mixed> $data Plan data.
+	 * @return int|false Plan ID on success, false on failure.
 	 */
 	public static function create( array $data ) {
 		global $wpdb;
@@ -85,7 +85,7 @@ final class LevelRepository {
 		$now = current_time( 'mysql' );
 
 		$result = $wpdb->insert(
-			Schema::levels_table(),
+			Schema::plans_table(),
 			[
 				'name'           => $data['name'],
 				'slug'           => $data['slug'],
@@ -104,10 +104,10 @@ final class LevelRepository {
 	}
 
 	/**
-	 * Update a level.
+	 * Update a plan.
 	 *
-	 * @param int                  $id   Level ID.
-	 * @param array<string, mixed> $data Level data.
+	 * @param int                  $id   Plan ID.
+	 * @param array<string, mixed> $data Plan data.
 	 * @return bool
 	 */
 	public static function update( int $id, array $data ): bool {
@@ -116,7 +116,7 @@ final class LevelRepository {
 		$data['updated_at'] = current_time( 'mysql' );
 
 		$result = $wpdb->update(
-			Schema::levels_table(),
+			Schema::plans_table(),
 			$data,
 			[ 'id' => $id ],
 			null,
@@ -127,16 +127,16 @@ final class LevelRepository {
 	}
 
 	/**
-	 * Delete a level.
+	 * Delete a plan.
 	 *
-	 * @param int $id Level ID.
+	 * @param int $id Plan ID.
 	 * @return bool
 	 */
 	public static function delete( int $id ): bool {
 		global $wpdb;
 
 		$result = $wpdb->delete(
-			Schema::levels_table(),
+			Schema::plans_table(),
 			[ 'id' => $id ],
 			[ '%d' ]
 		);
@@ -148,13 +148,13 @@ final class LevelRepository {
 	 * Check if slug exists.
 	 *
 	 * @param string   $slug       Slug to check.
-	 * @param int|null $exclude_id Level ID to exclude.
+	 * @param int|null $exclude_id Plan ID to exclude.
 	 * @return bool
 	 */
 	public static function slug_exists( string $slug, ?int $exclude_id = null ): bool {
 		global $wpdb;
 
-		$table = Schema::levels_table();
+		$table = Schema::plans_table();
 		$sql   = $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE slug = %s", $slug ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( null !== $exclude_id ) {

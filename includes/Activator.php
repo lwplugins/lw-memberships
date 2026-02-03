@@ -24,7 +24,7 @@ final class Activator {
 	/**
 	 * Current DB version.
 	 */
-	private const DB_VERSION = '1.0.0';
+	private const DB_VERSION = '1.1.0';
 
 	/**
 	 * Activate the plugin.
@@ -48,8 +48,8 @@ final class Activator {
 	private static function create_tables(): void {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
-		dbDelta( Schema::get_levels_sql() );
-		dbDelta( Schema::get_level_products_sql() );
+		dbDelta( Schema::get_plans_sql() );
+		dbDelta( Schema::get_plan_products_sql() );
 		dbDelta( Schema::get_memberships_sql() );
 		dbDelta( Schema::get_rules_sql() );
 	}

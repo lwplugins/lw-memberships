@@ -83,13 +83,12 @@ final class ContentFilter {
 	 * @return bool
 	 */
 	private function should_filter(): bool {
-		// Don't filter in admin.
 		if ( is_admin() ) {
 			return false;
 		}
 
-		// Don't filter feeds.
-		if ( is_feed() ) {
+		// Only filter singular views. Archives/feeds handled by QueryFilter.
+		if ( ! is_singular() ) {
 			return false;
 		}
 

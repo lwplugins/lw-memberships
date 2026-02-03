@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace LightweightPlugins\Memberships\Services;
 
-use LightweightPlugins\Memberships\Database\LevelRepository;
+use LightweightPlugins\Memberships\Database\PlanRepository;
 use LightweightPlugins\Memberships\Database\MembershipRepository;
-use LightweightPlugins\Memberships\Models\Level;
+use LightweightPlugins\Memberships\Models\Plan;
 
 /**
  * Handles granting and revoking memberships.
@@ -22,7 +22,7 @@ final class MembershipGranter {
 	 * Grant membership to user.
 	 *
 	 * @param int      $user_id         User ID.
-	 * @param int      $level_id        Level ID.
+	 * @param int      $plan_id         Plan ID.
 	 * @param string   $source          Source (purchase, subscription, manual, import).
 	 * @param int|null $order_id        Order ID.
 	 * @param int|null $subscription_id Subscription ID.
@@ -30,31 +30,31 @@ final class MembershipGranter {
 	 */
 	public static function grant(
 		int $user_id,
-		int $level_id,
+		int $plan_id,
 		string $source = 'manual',
 		?int $order_id = null,
 		?int $subscription_id = null
 	) {
-		$level = LevelRepository::get_by_id( $level_id );
+		$plan = PlanRepository::get_by_id( $plan_id );
 
-		if ( ! $level || ! $level->is_active() ) {
+		if ( ! $plan || ! $plan->is_active() ) {
 			return false;
 		}
 
-		// Check if user already has this level.
-		$existing = MembershipRepository::get_by_user_and_level( $user_id, $level_id );
+		// Check if user already has this plan.
+		$existing = MembershipRepository::get_by_user_and_plan( $user_id, $plan_id );
 
 		if ( $existing && $existing->is_active() ) {
-			return self::extend_membership( $existing->id, $level );
+			return self::extend_membership( $existing->id, $plan );
 		}
 
 		$start_date = current_time( 'mysql' );
-		$end_date   = $level->get_expiration_date( $start_date );
+		$end_date   = $plan->get_expiration_date( $start_date );
 
 		$membership_id = MembershipRepository::create(
 			[
 				'user_id'         => $user_id,
-				'level_id'        => $level_id,
+				'plan_id'         => $plan_id,
 				'order_id'        => $order_id,
 				'subscription_id' => $subscription_id,
 				'source'          => $source,
@@ -70,9 +70,9 @@ final class MembershipGranter {
 			 *
 			 * @param int $membership_id Membership ID.
 			 * @param int $user_id       User ID.
-			 * @param int $level_id      Level ID.
+			 * @param int $plan_id       Plan ID.
 			 */
-			do_action( 'lw_mship_membership_granted', $membership_id, $user_id, $level_id );
+			do_action( 'lw_mship_membership_granted', $membership_id, $user_id, $plan_id );
 		}
 
 		return $membership_id;
@@ -81,11 +81,11 @@ final class MembershipGranter {
 	/**
 	 * Extend existing membership.
 	 *
-	 * @param int   $membership_id Membership ID.
-	 * @param Level $level         Level object.
+	 * @param int  $membership_id Membership ID.
+	 * @param Plan $plan          Plan object.
 	 * @return int|false
 	 */
-	private static function extend_membership( int $membership_id, Level $level ) {
+	private static function extend_membership( int $membership_id, Plan $plan ) {
 		$membership = MembershipRepository::get_by_id( $membership_id );
 
 		if ( ! $membership ) {
@@ -94,7 +94,7 @@ final class MembershipGranter {
 
 		// Calculate new end date from current end date.
 		$start_from = $membership->end_date ?? current_time( 'mysql' );
-		$new_end    = $level->get_expiration_date( $start_from );
+		$new_end    = $plan->get_expiration_date( $start_from );
 
 		MembershipRepository::update(
 			$membership_id,
@@ -110,12 +110,12 @@ final class MembershipGranter {
 	/**
 	 * Revoke membership.
 	 *
-	 * @param int $user_id  User ID.
-	 * @param int $level_id Level ID.
+	 * @param int $user_id User ID.
+	 * @param int $plan_id Plan ID.
 	 * @return bool
 	 */
-	public static function revoke( int $user_id, int $level_id ): bool {
-		$membership = MembershipRepository::get_by_user_and_level( $user_id, $level_id );
+	public static function revoke( int $user_id, int $plan_id ): bool {
+		$membership = MembershipRepository::get_by_user_and_plan( $user_id, $plan_id );
 
 		if ( ! $membership ) {
 			return false;
@@ -135,9 +135,9 @@ final class MembershipGranter {
 			 *
 			 * @param int $membership_id Membership ID.
 			 * @param int $user_id       User ID.
-			 * @param int $level_id      Level ID.
+			 * @param int $plan_id       Plan ID.
 			 */
-			do_action( 'lw_mship_membership_revoked', $membership->id, $user_id, $level_id );
+			do_action( 'lw_mship_membership_revoked', $membership->id, $user_id, $plan_id );
 		}
 
 		return $result;

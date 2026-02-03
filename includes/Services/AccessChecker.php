@@ -35,9 +35,9 @@ final class AccessChecker {
 		}
 
 		// Check if post is restricted.
-		$level_ids = RuleRepository::get_level_ids_by_post( $post_id );
+		$plan_ids = RuleRepository::get_plan_ids_by_post( $post_id );
 
-		if ( empty( $level_ids ) ) {
+		if ( empty( $plan_ids ) ) {
 			return true; // Not restricted.
 		}
 
@@ -45,9 +45,9 @@ final class AccessChecker {
 			return false; // Not logged in.
 		}
 
-		// Check if user has any of the required levels.
-		foreach ( $level_ids as $level_id ) {
-			if ( MembershipRepository::user_has_level( $user_id, $level_id ) ) {
+		// Check if user has any of the required plans.
+		foreach ( $plan_ids as $plan_id ) {
+			if ( MembershipRepository::user_has_plan( $user_id, $plan_id ) ) {
 				return true;
 			}
 		}
@@ -67,9 +67,9 @@ final class AccessChecker {
 			$user_id = get_current_user_id();
 		}
 
-		$level_ids = RuleRepository::get_level_ids_by_post( $post_id );
+		$plan_ids = RuleRepository::get_plan_ids_by_post( $post_id );
 
-		if ( empty( $level_ids ) ) {
+		if ( empty( $plan_ids ) ) {
 			return null;
 		}
 
@@ -78,8 +78,8 @@ final class AccessChecker {
 		}
 
 		// Check user membership status.
-		foreach ( $level_ids as $level_id ) {
-			$membership = MembershipRepository::get_by_user_and_level( $user_id, $level_id );
+		foreach ( $plan_ids as $plan_id ) {
+			$membership = MembershipRepository::get_by_user_and_plan( $user_id, $plan_id );
 
 			if ( ! $membership ) {
 				continue;
@@ -98,13 +98,13 @@ final class AccessChecker {
 	}
 
 	/**
-	 * Get required levels for content.
+	 * Get required plans for content.
 	 *
 	 * @param int $post_id Post ID.
 	 * @return array<int>
 	 */
-	public static function get_required_levels( int $post_id ): array {
-		return RuleRepository::get_level_ids_by_post( $post_id );
+	public static function get_required_plans( int $post_id ): array {
+		return RuleRepository::get_plan_ids_by_post( $post_id );
 	}
 
 	/**

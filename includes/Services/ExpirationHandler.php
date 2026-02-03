@@ -40,13 +40,13 @@ final class ExpirationHandler {
 			 *
 			 * @param int $membership_id Membership ID.
 			 * @param int $user_id       User ID.
-			 * @param int $level_id      Level ID.
+			 * @param int $plan_id       Plan ID.
 			 */
 			do_action(
 				'lw_mship_membership_expired',
 				$membership_id,
 				$membership->user_id,
-				$membership->level_id
+				$membership->plan_id
 			);
 		}
 

@@ -3,7 +3,7 @@
  * Plugin Name:       LW Memberships
  * Plugin URI:        https://github.com/lwplugins/lw-memberships
  * Description:       Lightweight membership system with WooCommerce integration.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      8.2
  * Author:            LW Plugins
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Plugin constants.
-define( 'LW_MEMBERSHIPS_VERSION', '1.0.0' );
+define( 'LW_MEMBERSHIPS_VERSION', '1.1.0' );
 define( 'LW_MEMBERSHIPS_FILE', __FILE__ );
 define( 'LW_MEMBERSHIPS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'LW_MEMBERSHIPS_URL', plugin_dir_url( __FILE__ ) );

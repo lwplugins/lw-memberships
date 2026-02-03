@@ -1,15 +1,16 @@
 <?php
 /**
- * Levels list table.
+ * Plans list table.
  *
  * @package LightweightPlugins\Memberships
  */
 
 declare(strict_types=1);
 
-namespace LightweightPlugins\Memberships\Admin\Levels;
+namespace LightweightPlugins\Memberships\Admin\Plans;
 
-use LightweightPlugins\Memberships\Database\LevelRepository;
+use LightweightPlugins\Memberships\Database\PlanRepository;
+use LightweightPlugins\Memberships\Database\MembershipRepository;
 
 // Load WP_List_Table if not loaded.
 if ( ! class_exists( 'WP_List_Table' ) ) {
@@ -17,9 +18,9 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * Levels list table.
+ * Plans list table.
  */
-final class LevelsListTable extends \WP_List_Table {
+final class PlansListTable extends \WP_List_Table {
 
 	/**
 	 * Constructor.
@@ -27,8 +28,8 @@ final class LevelsListTable extends \WP_List_Table {
 	public function __construct() {
 		parent::__construct(
 			[
-				'singular' => 'level',
-				'plural'   => 'levels',
+				'singular' => 'plan',
+				'plural'   => 'plans',
 				'ajax'     => false,
 			]
 		);
@@ -45,6 +46,7 @@ final class LevelsListTable extends \WP_List_Table {
 			'name'     => __( 'Name', 'lw-memberships' ),
 			'slug'     => __( 'Slug', 'lw-memberships' ),
 			'duration' => __( 'Duration', 'lw-memberships' ),
+			'members'  => __( 'Members', 'lw-memberships' ),
 			'priority' => __( 'Priority', 'lw-memberships' ),
 			'status'   => __( 'Status', 'lw-memberships' ),
 		];
@@ -74,7 +76,7 @@ final class LevelsListTable extends \WP_List_Table {
 			$this->get_sortable_columns(),
 		];
 
-		$this->items = LevelRepository::get_all();
+		$this->items = PlanRepository::get_all();
 	}
 
 	/**
@@ -95,7 +97,7 @@ final class LevelsListTable extends \WP_List_Table {
 	 * @return string
 	 */
 	public function column_cb( $item ): string {
-		return sprintf( '<input type="checkbox" name="level[]" value="%d">', $item->id );
+		return sprintf( '<input type="checkbox" name="plan[]" value="%d">', $item->id );
 	}
 
 	/**
@@ -105,18 +107,28 @@ final class LevelsListTable extends \WP_List_Table {
 	 * @return string
 	 */
 	public function column_name( $item ): string {
-		$edit_url   = admin_url( 'admin.php?page=' . LevelsPage::SLUG . '&action=edit&id=' . $item->id );
+		$edit_url   = admin_url( 'admin.php?page=' . PlansPage::SLUG . '&action=edit&id=' . $item->id );
 		$delete_url = wp_nonce_url(
-			admin_url( 'admin.php?page=' . LevelsPage::SLUG . '&action=delete&id=' . $item->id ),
-			'delete_level_' . $item->id
+			admin_url( 'admin.php?page=' . PlansPage::SLUG . '&action=delete&id=' . $item->id ),
+			'delete_plan_' . $item->id
 		);
 
 		$actions = [
 			'edit'   => sprintf( '<a href="%s">%s</a>', esc_url( $edit_url ), __( 'Edit', 'lw-memberships' ) ),
-			'delete' => sprintf( '<a href="%s" onclick="return confirm(\'%s\');">%s</a>', esc_url( $delete_url ), esc_js( __( 'Are you sure?', 'lw-memberships' ) ), __( 'Delete', 'lw-memberships' ) ),
+			'delete' => sprintf(
+				'<a href="%s" onclick="return confirm(\'%s\');">%s</a>',
+				esc_url( $delete_url ),
+				esc_js( __( 'Are you sure?', 'lw-memberships' ) ),
+				__( 'Delete', 'lw-memberships' )
+			),
 		];
 
-		return sprintf( '<strong><a href="%s">%s</a></strong>%s', esc_url( $edit_url ), esc_html( $item->name ), $this->row_actions( $actions ) );
+		return sprintf(
+			'<strong><a href="%s">%s</a></strong>%s',
+			esc_url( $edit_url ),
+			esc_html( $item->name ),
+			$this->row_actions( $actions )
+		);
 	}
 
 	/**
@@ -135,16 +147,26 @@ final class LevelsListTable extends \WP_List_Table {
 	}
 
 	/**
+	 * Column members count.
+	 *
+	 * @param object $item Item.
+	 * @return string
+	 */
+	public function column_members( $item ): string {
+		return (string) MembershipRepository::count_by_plan( $item->id );
+	}
+
+	/**
 	 * Column status.
 	 *
 	 * @param object $item Item.
 	 * @return string
 	 */
 	public function column_status( $item ): string {
-		$style = 'active' === $item->status ? 'background: #00a32a; color: #fff;' : 'background: #dba617; color: #fff;';
+		$class = 'active' === $item->status ? 'lw-mship-status--active' : 'lw-mship-status--inactive';
 		$label = 'active' === $item->status ? __( 'Active', 'lw-memberships' ) : __( 'Inactive', 'lw-memberships' );
 
-		return sprintf( '<span style="padding: 2px 6px; border-radius: 3px; font-size: 11px; %s">%s</span>', $style, esc_html( $label ) );
+		return sprintf( '<span class="lw-mship-status %s">%s</span>', esc_attr( $class ), esc_html( $label ) );
 	}
 
 	/**
@@ -153,6 +175,6 @@ final class LevelsListTable extends \WP_List_Table {
 	 * @return void
 	 */
 	public function no_items(): void {
-		esc_html_e( 'No membership levels found.', 'lw-memberships' );
+		esc_html_e( 'No membership plans found.', 'lw-memberships' );
 	}
 }
